@@ -31,35 +31,38 @@ class AppRouterDelegate extends RouterDelegate<AppRoutePath>
 
   @override
   Widget build(BuildContext context) {
+    late final navigator;
+    if (bottomNavigationState.currentTab.index == 0) {
+      navigator = Navigator(
+        key: homePageManager.navigatorKey,
+        onPopPage: _onPopPage,
+        pages: homePageManager.pages,
+      );
+    } else if (bottomNavigationState.currentTab.index == 0) {
+      navigator = Navigator(
+        key: playPageManager.navigatorKey,
+        onPopPage: _onPopPage,
+        pages: playPageManager.pages,
+      );
+    } else {
+      navigator = Navigator(
+        key: accountPageManager.navigatorKey,
+        onPopPage: _onPopPage,
+        pages: accountPageManager.pages,
+      );
+    }
     return MultiProvider(
-        providers: [
-          ChangeNotifierProvider.value(value: bottomNavigationState),
-          ChangeNotifierProvider.value(value: homePageManager),
-          ChangeNotifierProvider.value(value: playPageManager),
-          ChangeNotifierProvider.value(value: accountPageManager)
-        ],
-        child: Scaffold(
-            bottomNavigationBar: _BottomNavigationBar(),
-            body: IndexedStack(
-              children: [
-                Navigator(
-                  key: homePageManager.navigatorKey,
-                  onPopPage: _onPopPage,
-                  pages: homePageManager.pages,
-                ),
-                Navigator(
-                  key: playPageManager.navigatorKey,
-                  onPopPage: _onPopPage,
-                  pages: playPageManager.pages,
-                ),
-                Navigator(
-                  key: accountPageManager.navigatorKey,
-                  onPopPage: _onPopPage,
-                  pages: accountPageManager.pages,
-                )
-              ],
-              index: bottomNavigationState.currentTab.index,
-            )));
+      providers: [
+        ChangeNotifierProvider.value(value: bottomNavigationState),
+        ChangeNotifierProvider.value(value: homePageManager),
+        ChangeNotifierProvider.value(value: playPageManager),
+        ChangeNotifierProvider.value(value: accountPageManager)
+      ],
+      child: Scaffold(
+        bottomNavigationBar: _BottomNavigationBar(),
+        body: navigator,
+      ),
+    );
   }
 
   bool _onPopPage(Route<dynamic> route, dynamic result) {
